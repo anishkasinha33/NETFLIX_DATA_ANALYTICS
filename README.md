@@ -157,25 +157,4 @@ IF(
 - Top 10 Content Genres & Categories: Filtered Top-N clustered bar chart of driving catalog classifications.
 - Catalog Freshness (Acquisition Gap): Clustered column distribution tracking immediate acquisitions versus archival releases.
 
-## Repository Structure
-```
-.
-|-- README.md
-|-- data/
-|   `-- netflix_titles.csv
-|-- sql/
-|   `-- catalog_analysis_queries.sql
-`-- pbix/
-    `-- Netflix_Analysis_Dashboard.pbix
-```
-
-## How to Reproduce
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/](https://github.com/)<your-username>/netflix-catalog-dashboard.git
-   ```
-2. Open Microsoft Power BI Desktop.
-3. Open `pbix/Netflix_Analysis_Dashboard.pbix`.
-4. Re-point data source if necessary via **Transform Data > Data Source Settings** to your local dataset.
-5. Click **Close & Apply** to refresh the dataset.
 
