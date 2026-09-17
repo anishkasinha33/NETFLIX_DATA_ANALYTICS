@@ -1,40 +1,41 @@
-# Netflix Global Catalog Analytics & Intelligence Dashboard[cite: 1, 2]
+# Netflix Global Catalog Analytics & Intelligence Dashboard
 
-## Overview[cite: 1, 2]
-This repository contains an end-to-end data analytics and business intelligence project examining Netflix's content library dynamics using a 2020 catalog dataset[cite: 1, 2]. The solution connects PostgreSQL data exploration with Power BI Desktop modeling to evaluate catalog composition, geographic distribution, underserved markets, movie runtime trajectories, acquisition freshness, and TV show renewal patterns[cite: 1, 2].
+## Overview
+This repository contains an end-to-end data analytics and business intelligence project examining Netflix's content library dynamics using a 2020 catalog dataset. The solution connects PostgreSQL data exploration with Power BI Desktop modeling to evaluate catalog composition, geographic distribution, underserved markets, movie runtime trajectories, acquisition freshness, and TV show renewal patterns.
 
-## Dataset Specification[cite: 1, 2]
-- Data Source: `public netflix_titles`[cite: 1, 2]
-- Temporal Scope: Catalog releases and additions through 2020 (~8,800 records)[cite: 1, 2]
-- Primary Attributes:[cite: 1, 2]
-  - `show_id`: Unique record identifier[cite: 1, 2]
-  - `type`: Content classification (`Movie` vs `TV Show`)[cite: 1, 2]
-  - `title`: Program title[cite: 1, 2]
-  - `director`: Film or show director(s)[cite: 1, 2]
-  - `cast`: Listed cast members[cite: 1, 2]
-  - `country`: Production and distribution territories[cite: 1, 2]
-  - `date_added`: Platform addition date[cite: 1, 2]
-  - `release_year`: Original production/release year[cite: 1, 2]
-  - `rating`: Target demographic classification (`TV-MA`, `TV-14`, `R`, `PG`, etc.)[cite: 1, 2]
-  - `duration`: Raw length string (`min` for movies, `Season`/`Seasons` for series)[cite: 1, 2]
-  - `duration_min`: Parsed numeric duration for films[cite: 1, 2]
-  - `duration_seasons`: Parsed numeric count of seasons for TV shows[cite: 1, 2]
-  - `listed_in`: Associated content genres and categories[cite: 1, 2]
-  - `description`: Catalog synopsis[cite: 1, 2]
+## Dataset Specification
+- Data Source: `public netflix_titles`
+- Temporal Scope: Catalog releases and additions through 2020 (~8,800 records)
+- Primary Attributes:
+  - `show_id`: Unique record identifier
+  - `type`: Content classification (`Movie` vs `TV Show`)
+  - `title`: Program title
+  - `director`: Film or show director(s)
+  - `cast`: Listed cast members
+  - `country`: Production and distribution territories
+  - `date_added`: Platform addition date
+  - `release_year`: Original production/release year
+  - `rating`: Target demographic classification (`TV-MA`, `TV-14`, `R`, `PG`, etc.)
+  - `duration`: Raw length string (`min` for movies, `Season`/`Seasons` for series)
+  - `duration_min`: Parsed numeric duration for films
+  - `duration_seasons`: Parsed numeric count of seasons for TV shows
+  - `listed_in`: Associated content genres and categories
+  - `description`: Catalog synopsis
 
-## Key Questions Answered[cite: 1, 2]
-1. Content Mix Trajectory: How has the split between feature films and multi-episode TV shows evolved over decades?[cite: 1, 2]
-2. Geographic Focus & Underserved Territories: Which countries dominate Netflix's output, and where are the primary catalog coverage gaps (countries with 5 or fewer titles)?[cite: 1, 2]
-3. Content Duration Dynamics: How have average movie runtimes shifted historically across release years?[cite: 1, 2]
-4. Series Longevity & Attrition: What percentage of TV shows survive past Season 1 versus reaching franchise longevity (3-5 or 6+ seasons)?[cite: 1, 2]
-5. Acquisition Latency (Freshness): What is the typical gap between a title's original release year and its arrival on the Netflix platform?[cite: 1, 2]
-6. Category Concentration: Which genres and content classifications drive the highest volume across the library?[cite: 1, 2]
+## Key Questions Answered
+1. Content Volume Dynamics: How has catalog production expanded across movies versus episodic series over historical release years?
+2. International Production Hubs: Which countries constitute the core content pipeline for Netflix?
+3. Underserved Catalog Blind Spots: Which territories possess low presence (5 or fewer indexed titles) requiring targeted acquisition?
+4. Content Runtime Trajectory: How has the average duration of feature films evolved over release decades?
+5. TV Show Retention & Shelf-Life: What proportion of episodic shows stop at Season 1 versus getting renewed or establishing multi-season franchise longevity?
+6. Catalog Freshness: What is the distribution of acquisition lag (the latency in years between original release and inclusion on Netflix)?
+7. Category Concentration: Which genres and content classifications drive the highest volume across the library?
 
-## Technical Architecture[cite: 1, 2]
+## Technical Architecture
 
-### 1. PostgreSQL Data Exploration & Segmentation[cite: 1, 2]
+### 1. PostgreSQL Data Exploration & Segmentation
 
-Content Volume by Type and Year:[cite: 1, 2]
+Content Volume by Type and Year:
 ```sql
 SELECT 
     release_year,
@@ -45,7 +46,7 @@ GROUP BY release_year, type
 ORDER BY release_year DESC;
 ```
 
-High-Volume vs. Underserved Geographic Markets:[cite: 1, 2]
+High-Volume vs. Underserved Geographic Markets:
 ```sql
 -- Top producing countries
 SELECT 
@@ -68,7 +69,7 @@ HAVING COUNT(*) <= 5
 ORDER BY total_titles ASC;
 ```
 
-Show Lifespan & Renewal Rates:[cite: 1, 2]
+Show Lifespan & Renewal Rates:
 ```sql
 SELECT 
     CASE
@@ -86,7 +87,7 @@ GROUP BY show_lifespan
 ORDER BY total_shows DESC;
 ```
 
-Catalog Freshness (Acquisition Latency):[cite: 1, 2]
+Catalog Freshness (Acquisition Latency):
 ```sql
 SELECT 
     EXTRACT(YEAR FROM date_added) - release_year AS years_gap,
@@ -100,9 +101,9 @@ ORDER BY years_gap ASC
 LIMIT 10;
 ```
 
-### 2. Power BI DAX Modeling & Calculated Columns[cite: 1, 2]
+### 2. Power BI DAX Modeling & Calculated Columns
 
-TV Show Lifespan Categorization:[cite: 1, 2]
+TV Show Lifespan Categorization:
 ```dax
 show_lifespan = 
 SWITCH(
@@ -115,7 +116,7 @@ SWITCH(
 )
 ```
 
-Content Acquisition Gap (Years Latency):[cite: 1, 2]
+Content Acquisition Gap (Years Latency):
 ```dax
 years_gap = 
 IF(
@@ -127,7 +128,7 @@ IF(
 )
 ```
 
-Movie Runtime Numeric Parsing:[cite: 1, 2]
+Movie Runtime Numeric Parsing:
 ```dax
 duration_min = 
 IF(
@@ -137,7 +138,7 @@ IF(
 )
 ```
 
-TV Show Season Count Extraction:[cite: 1, 2]
+TV Show Season Count Extraction:
 ```dax
 duration_seasons = 
 IF(
@@ -147,16 +148,16 @@ IF(
 )
 ```
 
-### 3. Dashboard Visuals & Layout[cite: 1, 2]
-- Catalog Growth by Year: Line chart comparing Movie vs. TV Show volume trajectories[cite: 1, 2].
-- Top 10 Producing Countries: Horizontal clustered bar chart highlighting dominant markets[cite: 1, 2].
-- Underserved Markets: Scrollable filtered table identifying low-catalog regions (`<= 5` titles)[cite: 1, 2].
-- Average Movie Runtime Over Time: Continuous trendline tracking movie length fluctuations across historical release years[cite: 1, 2].
-- TV Show Lifespan & Renewal Breakdown: Donut chart displaying season survival distributions[cite: 1, 2].
-- Top 10 Content Genres & Categories: Filtered Top-N clustered bar chart of driving catalog classifications[cite: 1, 2].
-- Catalog Freshness (Acquisition Gap): Clustered column distribution tracking immediate acquisitions versus archival releases[cite: 1, 2].
+### 3. Dashboard Visuals & Layout
+- Catalog Growth by Year: Line chart comparing Movie vs. TV Show volume trajectories.
+- Top 10 Producing Countries: Horizontal clustered bar chart highlighting dominant markets.
+- Underserved Markets: Scrollable filtered table identifying low-catalog regions (`<= 5` titles).
+- Average Movie Runtime Over Time: Continuous trendline tracking movie length fluctuations across historical release years.
+- TV Show Lifespan & Renewal Breakdown: Donut chart displaying season survival distributions.
+- Top 10 Content Genres & Categories: Filtered Top-N clustered bar chart of driving catalog classifications.
+- Catalog Freshness (Acquisition Gap): Clustered column distribution tracking immediate acquisitions versus archival releases.
 
-## Repository Structure[cite: 1, 2]
+## Repository Structure
 ```
 .
 |-- README.md
@@ -168,12 +169,13 @@ IF(
     `-- Netflix_Analysis_Dashboard.pbix
 ```
 
-## How to Reproduce[cite: 1, 2]
-1. Clone the repository:[cite: 1, 2]
+## How to Reproduce
+1. Clone the repository:
    ```bash
    git clone [https://github.com/](https://github.com/)<your-username>/netflix-catalog-dashboard.git
    ```
-2. Open Microsoft Power BI Desktop[cite: 1, 2].
-3. Open `pbix/Netflix_Analysis_Dashboard.pbix`[cite: 1, 2].
-4. Re-point data source if necessary via **Transform Data > Data Source Settings** to your local dataset[cite: 1, 2].
-5. Click **Close & Apply** to refresh the dataset[cite: 1, 2].
+2. Open Microsoft Power BI Desktop.
+3. Open `pbix/Netflix_Analysis_Dashboard.pbix`.
+4. Re-point data source if necessary via **Transform Data > Data Source Settings** to your local dataset.
+5. Click **Close & Apply** to refresh the dataset.
+
